@@ -178,52 +178,48 @@ def create_parser() -> argparse.ArgumentParser:
 
 
 def run_interactive_menu() -> None:
-    """Display the interactive launcher menu when run without subcommands."""
-    rules_path = get_default_rules_path()
-    if not rules_path.exists():
-        save_rules_yaml(RulesConfig(), rules_path)
-    rules_cfg = load_rules_yaml(rules_path)
-
-    print("\n" + "=" * 60)
-    print("              📖  Welcome to Book-Angel")
-    print("=" * 60)
-    print(f"Active Rules File: {rules_path}")
-    print(f"  • Romance Level:    {rules_cfg.romance_level}")
-    print(f"  • Violence Level:   {rules_cfg.violence_level}")
-    print(f"  • Character Rules:  {len(rules_cfg.character_mappings)} configured")
-    print(f"  • Export Directory: {get_default_export_dir()}")
-    print("-" * 60)
-    print("[1] 📂 Open a Book (Opens Mac Finder dialog to select EPUB/PDF)")
-    print("[2] 📝 Open rules.txt (Paste your plain-English rules)")
-    print("[3] ⚙️  Open rules.yaml (Advanced configuration)")
-    print("[4] 🔍 Review Chunk Diffs")
-    print("[5] 📦 Export Clean Book to Downloads")
-    print("[Q] ❌ Quit")
-    print("=" * 60)
-
-    try:
-        choice = input("Choose an option [1-5, Q]: ").strip().lower()
-    except (EOFError, KeyboardInterrupt):
-        return
+    """Display the streamlined Book-Angel launcher."""
+    staging_root = Path.cwd() / ".book-angel" / "staging"
+    staged_slugs = (
+        sorted([d.name for d in staging_root.iterdir() if d.is_dir()])
+        if staging_root.exists()
+        else []
+    )
 
     txt_rules = get_plain_text_rules_path()
-    if choice == "1":
-        main(["unpack"])
-    elif choice == "2":
-        if not txt_rules.exists():
-            txt_rules.write_text("# Paste your plain-English rules here:\n", encoding="utf-8")
-        open_file_in_editor(txt_rules)
-        print(f"Opened {txt_rules} in your editor. Paste your rules and save!")
-    elif choice == "3":
-        open_file_in_editor(rules_path)
-        print(f"Opened {rules_path} in your editor.")
-    elif choice == "4":
-        main(["review"])
-    elif choice == "5":
-        main(["export"])
-    elif choice in ("q", "quit", "exit"):
-        print("Goodbye!")
-        sys.exit(0)
+    yaml_rules = get_default_rules_path()
+    active_rules_name = "rules.txt" if txt_rules.exists() else yaml_rules.name
+
+    print("\n" + "=" * 65)
+    print("                     📖  Book-Angel")
+    print("=" * 65)
+    print(f"Active Rules: {active_rules_name} (double-click Edit-Rules.command to edit)")
+    print(f"Export Destination: {get_default_export_dir()}")
+    print("-" * 65)
+
+    if staged_slugs:
+        latest = staged_slugs[0]
+        print(f"Active Unpacked Book: '{latest}'")
+        print("[1] 📂 Open a DIFFERENT Book (Opens Mac Finder)")
+        print("[2] 📦 Export Clean Book to Downloads (~/Downloads/)")
+        print("[Q] ❌ Quit")
+        print("=" * 65)
+        try:
+            choice = input("Select an option [1, 2, Q] (Default: 2): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            return
+
+        if choice == "1":
+            main(["unpack"])
+        elif choice in ("", "2"):
+            main(["export"])
+        elif choice in ("q", "quit", "exit"):
+            sys.exit(0)
+        return
+
+    # If no book is staged yet, immediately open Finder to pick one!
+    print("Opening macOS Finder to select your book (.epub or .pdf)...")
+    main(["unpack"])
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -337,7 +333,20 @@ def main(argv: list[str] | None = None) -> None:
         print("-" * 65)
         print(ai_prompt)
         print("=" * 65)
-        print("\nNext step: Once Gemini finishes, run 'book-angel export' to save to ~/Downloads/!\n")
+
+        if sys.stdin.isatty():
+            try:
+                user_act = input("\n👉 Once Gemini finishes editing, press [Enter] here to export directly to ~/Downloads (or type 'q' to exit): ").strip().lower()
+                if user_act not in ("q", "quit", "exit"):
+                    out_file = export_book(
+                        ws,
+                        get_default_export_dir(),
+                        export_format="epub",
+                        title_suffix="[Clean Edition]",
+                    )
+                    print(f"\n✨ Export complete! Clean book saved to:\n   {out_file}\n")
+            except (EOFError, KeyboardInterrupt):
+                pass
 
     elif args.command == "review":
         staging_root = Path.cwd() / ".book-angel" / "staging"
