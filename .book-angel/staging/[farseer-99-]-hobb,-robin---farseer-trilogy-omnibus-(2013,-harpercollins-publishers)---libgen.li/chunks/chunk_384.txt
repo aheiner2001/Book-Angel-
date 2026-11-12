@@ -1,0 +1,17 @@
+<!-- chunk_id: 384 | chapter: 123 | scene: 1 | title: id133 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h1 class="chapterTitle" id="calibre_pb_0"><a href="part0001.html#abouttheauthor" class="calibre5">About the Author</a></h1>
+<p class="separator">Robin Hobb is the author of five critically acclaimed fantasy series: <i class="calibre11">The Farseer Trilogy</i>, <i class="calibre11">The Liveship Traders Trilogy</i>, <i class="calibre11">The Tawny Man Trilogy</i>, <i class="calibre11">The Soldier Son Trilogy</i> and <i class="calibre11">The Rain Wild Chronicles</i>. She lives and works in Tacoma, Washington, and has been a professional writer for over 30 years.</p> 
+<p class="separator"><a href="http://www.robinhobb.com" class="calibre3">www.robinhobb.com</a></p>
+<p class="separatorlarge">Follow Robin on Twitter <a href="https://twitter.com/robinhobb" class="calibre5">@robinhobb</a></p>
+</body></html>

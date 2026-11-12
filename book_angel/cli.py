@@ -43,6 +43,18 @@ def prompt_mac_file_picker() -> Path | None:
     return None
 
 
+def copy_to_clipboard(text: str) -> bool:
+    """Copy text to macOS system clipboard using pbcopy."""
+    if sys.platform != "darwin":
+        return False
+    try:
+        proc = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
+        proc.communicate(text.encode("utf-8"))
+        return proc.returncode == 0
+    except Exception:
+        return False
+
+
 def get_default_export_dir() -> Path:
     """Get the default export directory, prioritizing user's Downloads folder."""
     downloads = Path.home() / "Downloads"
@@ -301,6 +313,31 @@ def main(argv: list[str] | None = None) -> None:
                 file=sys.stderr,
             )
             sys.exit(1)
+
+        ai_prompt = (
+            f"Please process the book chunks in:\n"
+            f"{ws.chunks_dir}\n\n"
+            f"Follow the exact rules and guidelines in:\n"
+            f"{ws.root / 'rules.md'}\n\n"
+            f"Inspect each chunk file and surgically modify only the specific sentences that conflict with the rules. Keep all other text 100% identical."
+        )
+        copied = copy_to_clipboard(ai_prompt)
+        print("\n" + "=" * 65)
+        print("🎉 BOOK UNPACKED AND READY!")
+        print("=" * 65)
+        print(f"Book: {ws.root.name}")
+        print(f"Total Chunks: {len(chunks)}")
+        print(f"Staging Folder: {ws.root}")
+        print("-" * 65)
+        if copied:
+            print("📋 PROMPT AUTOMATICALLY COPIED TO CLIPBOARD!")
+            print("   👉 Just open Gemini (or Cursor) and press Cmd + V!")
+        else:
+            print("📋 Copy and paste this prompt into Gemini / Antigravity / Cursor:")
+        print("-" * 65)
+        print(ai_prompt)
+        print("=" * 65)
+        print("\nNext step: Once Gemini finishes, run 'book-angel export' to save to ~/Downloads/!\n")
 
     elif args.command == "review":
         staging_root = Path.cwd() / ".book-angel" / "staging"

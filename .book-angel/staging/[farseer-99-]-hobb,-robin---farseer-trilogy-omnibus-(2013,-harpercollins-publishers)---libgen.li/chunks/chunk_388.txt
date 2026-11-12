@@ -1,0 +1,21 @@
+<!-- chunk_id: 388 | chapter: 127 | scene: 1 | title: id1361 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<div class="calibre1">
+<h1 class="chapterTitle" id="calibre_pb_0"><a href="part0001.html#atp" class="calibre5">About the Publisher</a></h1>
+<p class="atptext"><strong class="calibre18">Australia</strong><br class="calibre4"/>HarperCollins Publishers (Australia) Pty. Ltd.<br class="calibre4"/>Level 13, 201 Elizabeth Street<br class="calibre4"/>Sydney, NSW 2000, Australia<br class="calibre4"/><a href="http://www.harpercollinsebooks.com.au" class="calibre3">http://www.harpercollinsebooks.com.au</a></p>
+<p class="atptext">Canada<br class="calibre4"/>HarperCollins Canada<br class="calibre4"/>2 Bloor Street East – 20th Floor<br class="calibre4"/>Toronto, ON, M4W 1A8, Canada<br class="calibre4"/><a href="http://www.harpercollinsebooks.ca" class="calibre3">http://www.harpercollinsebooks.ca</a></p>
+<p class="atptext">New Zealand<br class="calibre4"/>HarperCollins Publishers (New Zealand) Limited<br class="calibre4"/>P.O. Box 1<br class="calibre4"/>Auckland, New Zealand<br class="calibre4"/><a href="http://www.harpercollinsebooks.co.nz" class="calibre3">http://www.harpercollinsebooks.co.nz</a></p>
+<p class="atptext">United Kingdom<br class="calibre4"/>HarperCollins Publishers Ltd.<br class="calibre4"/>77–85 Fulham Palace Road<br class="calibre4"/>London, W6 8JB, UK<br class="calibre4"/><a href="http://www.harpercollinsebooks.co.uk" class="calibre3">http://www.harpercollinsebooks.co.uk</a></p>
+<p class="atptext">United States<br class="calibre4"/>HarperCollins Publishers Inc.<br class="calibre4"/>10 East 53rd Street<br class="calibre4"/>New York, NY 10022<br class="calibre4"/><a href="http://www.harpercollinsebooks.com" class="calibre3">http://www.harpercollinsebooks.com</a></p>
+</div>
+</body></html>

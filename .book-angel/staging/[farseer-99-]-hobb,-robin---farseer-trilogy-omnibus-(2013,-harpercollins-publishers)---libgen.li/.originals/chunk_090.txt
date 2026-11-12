@@ -1,0 +1,54 @@
+<!-- chunk_id: 090 | chapter: 38 | scene: 1 | title: id48 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h1 id="heading_id_2" class="chapter">Contents</h1>
+<p class="toc"><a href="part0033.html" class="hlink">Cover</a></p>
+<p id="tpa" class="toc"><a href="part0034.html" class="hlink">Title Page</a></p>
+<p id="ded" class="toc1"><a href="part0035.html" class="hlink">Dedication</a></p>
+<p id="proa" class="toc"><a href="part0037.html" class="hlink">Prologue</a></p>
+<p id="c01a" class="toc"><a href="part0038.html" class="hlink">One: Siltbay</a></p>
+<p id="c02a" class="toc"><a href="part0039.html" class="hlink">Two: The Homecoming</a></p>
+<p id="c03a" class="toc"><a href="part0040.html" class="hlink">Three: Renewing Ties</a></p>
+<p id="c04a" class="toc"><a href="part0041.html" class="hlink">Four: Dilemmas</a></p>
+<p id="c05a" class="toc"><a href="part0042.html" class="hlink">Five: Gambit</a></p>
+<p id="c06a" class="toc"><a href="part0043.html" class="hlink">Six: Forged Ones</a></p>
+<p id="c07a" class="toc"><a href="part0044.html" class="hlink">Seven: Encounters</a></p>
+<p id="c08a" class="toc"><a href="part0045.html" class="hlink">Eight: The Queen Awakes</a></p>
+<p id="c09a" class="toc"><a href="part0046.html" class="hlink">Nine: Guards and Bonds</a></p>
+<p id="c10a" class="toc"><a href="part0047.html" class="hlink">Ten: Fool’s Errand</a></p>
+<p id="c11a" class="toc"><a href="part0048.html" class="hlink">Eleven: Lone Wolves</a></p>
+<p id="c12a" class="toc"><a href="part0049.html" class="hlink">Twelve: Tasks</a></p>
+<p id="c13a" class="toc"><a href="part0050.html" class="hlink">Thirteen: Hunting</a></p>
+<p id="c14a" class="toc"><a href="part0051.html" class="hlink">Fourteen: Winterfest</a></p>
+<p id="c15a" class="toc"><a href="part0052.html" class="hlink">Fifteen: Secrets</a></p>
+<p id="c16a" class="toc"><a href="part0053.html" class="hlink">Sixteen: Verity’s Ships</a></p>
+<p id="c17a" class="toc"><a href="part0054.html" class="hlink">Seventeen: Interludes</a></p>
+<p id="c18a" class="toc"><a href="part0055.html" class="hlink">Eighteen: Elderlings</a></p>
+<p id="c19a" class="toc"><a href="part0056.html" class="hlink">Nineteen: Messages</a></p>
+<p id="c20a" class="toc"><a href="part0057.html" class="hlink">Twenty: Mishaps</a></p>
+<p id="c21a" class="toc"><a href="part0058.html" class="hlink">Twenty-One: Dark Days</a></p>
+<p id="c22a" class="toc"><a href="part0059.html" class="hlink">Twenty-Two: Burrich</a></p>
+<p id="c23a" class="toc"><a href="part0060.html" class="hlink">Twenty-Three: Threats</a></p>
+<p id="c24a" class="toc"><a href="part0061.html" class="hlink">Twenty-Four: Neatbay</a></p>
+<p id="c25a" class="toc"><a href="part0062.html" class="hlink">Twenty-Five: Buckkeep</a></p>
+<p id="c26a" class="toc"><a href="part0063.html" class="hlink">Twenty-Six: Skilling</a></p>
+<p id="c27a" class="toc"><a href="part0064.html" class="hlink">Twenty-Seven: Conspiracy</a></p>
+<p id="c28a" class="toc"><a href="part0065.html" class="hlink">Twenty-Eight: Treasons and Traitors</a></p>
+<p id="c29a" class="toc"><a href="part0066.html" class="hlink">Twenty-Nine: Escapes and Captures</a></p>
+<p id="c30a" class="toc"><a href="part0067.html" class="hlink">Thirty: Dungeons</a></p>
+<p id="c31a" class="toc"><a href="part0068.html" class="hlink">Thirty-One: Torture</a></p>
+<p id="c32a" class="toc"><a href="part0069.html" class="hlink">Thirty-Two: Execution</a></p>
+<p id="c33a" class="toc1"><a href="part0070.html" class="hlink">Thirty-Three: Wolf Days</a></p>
+<p id="epia" class="toc"><a href="part0071.html" class="hlink">Epilogue</a><br class="calibre4"/><br class="calibre4"/></p>
+<p id="copa" class="toc"><a href="part0072.html" class="hlink">Copyright</a></p>
+
+</body></html>

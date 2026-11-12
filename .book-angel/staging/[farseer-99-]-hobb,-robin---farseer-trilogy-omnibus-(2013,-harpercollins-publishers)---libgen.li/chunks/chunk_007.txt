@@ -1,0 +1,15 @@
+<!-- chunk_id: 007 | chapter: 7 | scene: 1 | title: id17 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h1 id="ded1" class="chapterTitle"><a href="part0006.html" class="calibre5">Dedication</a></h1>
+<p class="dedicationText">For Giles<br class="calibre4"/>And for Raphael and Freddy,<br class="calibre4"/>the Princes of Assassins.</p>
+</body></html>

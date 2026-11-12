@@ -1,0 +1,64 @@
+<!-- chunk_id: 221 | chapter: 78 | scene: 1 | title: id88 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<div id="TOC" class="calibre1">
+<h1 class="left" id="calibre_pb_0">CONTENTS</h1>
+<p class="toc2"><a href="part0073.html" class="hlink">Cover</a></p>
+<p class="toc2"><a href="part0074.html" class="hlink">Title Page</a></p>
+<p id="ded" class="toc2"><a href="part0075.html#ded1" class="hlink">Dedication</a><br class="calibre4"/><br class="calibre4"/></p>
+<p id="prologue" class="toc2"><a href="part0077.html#pro" class="hlink">Prologue: The Unremembered</a></p>
+<p id="one" class="toc2"><a href="part0078.html#chapter1" class="hlink">One: Gravebirth</a></p>
+<p id="two" class="toc2"><a href="part0079.html#chapter2" class="hlink">Two: The Parting</a></p>
+<p id="three" class="toc2"><a href="part0080.html#chapter3" class="hlink">Three: The Quest</a></p>
+<p id="four" class="toc2"><a href="part0081.html#chapter4" class="hlink">Four: The River Road</a></p>
+<p id="five" class="toc2"><a href="part0082.html#chapter5" class="hlink">Five: Confrontations</a></p>
+<p id="six" class="toc2"><a href="part0083.html#chapter6" class="hlink">Six: The Wit and the Skill</a></p>
+<p id="seven" class="toc2"><a href="part0084.html#chapter7" class="hlink">Seven: Farrow</a></p>
+<p id="eight" class="toc2"><a href="part0085.html#chapter8" class="hlink">Eight: Tradeford</a></p>
+<p id="nine" class="toc2"><a href="part0086.html#chapter9" class="hlink">Nine: Assassin</a></p>
+<p id="ten" class="toc2"><a href="part0087.html#chapter10" class="hlink">Ten: Hiring Fair</a></p>
+<p id="eleven" class="toc2"><a href="part0088.html#chapter11" class="hlink">Eleven: Shepherd</a></p>
+<p id="twelve" class="toc2"><a href="part0089.html#chapter12" class="hlink">Twelve: Suspicions</a></p>
+<p id="thirteen" class="toc2"><a href="part0090.html#chapter13" class="hlink">Thirteen: Blue Lake</a></p>
+<p id="fourteen" class="toc2"><a href="part0091.html#chapter14" class="hlink">Fourteen: Smugglers</a></p>
+<p id="fifteen" class="toc2"><a href="part0092.html#chapter15" class="hlink">Fifteen: Kettle</a></p>
+<p id="sixteen" class="toc2"><a href="part0093.html#chapter16" class="hlink">Sixteen: Bolthole</a></p>
+<p id="seventeen" class="toc2"><a href="part0094.html#chapter17" class="hlink">Seventeen: River Crossing</a></p>
+<p id="eighteen" class="toc2"><a href="part0095.html#chapter18" class="hlink">Eighteen: Moonseye</a></p>
+<p id="nineteen" class="toc2"><a href="part0096.html#chapter19" class="hlink">Nineteen: Pursuit</a></p>
+<p id="twenty" class="toc2"><a href="part0097.html#chapter20" class="hlink">Twenty: Jhaampe</a></p>
+<p id="twenty-one" class="toc2"><a href="part0098.html#chapter21" class="hlink">Twenty-One: Confrontations</a></p>
+<p id="twenty-two" class="toc2"><a href="part0099.html#chapter22" class="hlink">Twenty-Two: Departure</a></p>
+<p id="twenty-three" class="toc2"><a href="part0100.html#chapter23" class="hlink">Twenty-Three: The Mountains</a></p>
+<p id="twenty-four" class="toc2"><a href="part0101.html#chapter24" class="hlink">Twenty-Four: The Skill Road</a></p>
+<p id="twenty-five" class="toc2"><a href="part0102.html#chapter25" class="hlink">Twenty-Five: Strategy</a></p>
+<p id="twenty-six" class="toc2"><a href="part0103.html#chapter26" class="hlink">Twenty-Six: Signposts</a></p>
+<p id="twenty-seven" class="toc2"><a href="part0104.html#chapter27" class="hlink">Twenty-Seven: The City</a></p>
+<p id="twenty-eight" class="toc2"><a href="part0105.html#chapter28" class="hlink">Twenty-Eight: The Coterie</a></p>
+<p id="twenty-nine" class="toc2"><a href="part0106.html#chapter29" class="hlink">Twenty-Nine: The Rooster Crown</a></p>
+<p id="thirty" class="toc2"><a href="part0107.html#chapter30" class="hlink">Thirty: Stone Garden</a></p>
+<p id="thirty-one" class="toc2"><a href="part0108.html#chapter31" class="hlink">Thirty-One: Elfbark</a></p>
+<p id="thirty-two" class="toc2"><a href="part0109.html#chapter32" class="hlink">Thirty-Two: Capelin Beach</a></p>
+<p id="thirty-three" class="toc2"><a href="part0110.html#chapter33" class="hlink">Thirty-Three: The Quarry</a></p>
+<p id="thirty-four" class="toc2"><a href="part0111.html#chapter34" class="hlink">Thirty-Four: Girl on a Dragon</a></p>
+<p id="thirty-five" class="toc2"><a href="part0112.html#chapter35" class="hlink">Thirty-Five: Kettle’s Secrets</a></p>
+<p id="thirty-six" class="toc2"><a href="part0113.html#chapter36" class="hlink">Thirty-Six: The Wit and the Sword</a></p>
+<p id="thirty-seven" class="toc2"><a href="part0114.html#chapter37" class="hlink">Thirty-Seven: Feeding the Dragon</a></p>
+<p id="thirty-eight" class="toc2"><a href="part0115.html#chapter38" class="hlink">Thirty-Eight: Verity’s Bargain</a></p>
+<p id="thirty-nine" class="toc2"><a href="part0116.html#chapter39" class="hlink">Thirty-Nine: Verity’s Dragon</a></p>
+<p id="forty" class="toc2"><a href="part0117.html#chapter40" class="hlink">Forty: Regal</a></p>
+<p id="forty-one" class="toc2"><a href="part0118.html#chapter41" class="hlink">Forty-One: The Scribe</a><br class="calibre4"/><br class="calibre4"/></p>
+
+<p id="copyright" class="toc2"><a href="part0119.html#cpy" class="hlink">Copyright</a></p>
+
+</div>
+</body></html>

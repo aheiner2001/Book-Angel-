@@ -1,0 +1,18 @@
+<!-- chunk_id: 220 | chapter: 77 | scene: 1 | title: id87 -->
+
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>THE FARSEER TRILOGY: Assassin’s Apprentice, Royal Assassin and Assassin’s Quest</title>
+    <link href="../page-template.xpgt" type="application/vnd.adobe-page-template+xml" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h1 id="ded1" class="left"><a href="part0076.html#ded" class="calibre13">DEDICATION</a></h1>
+<p class="center2">For the very real Kat Ogden</p>
+<p class="center2">Who threatened, at an early age, to grow up and be<br class="calibre4"/>a tap dancing,<br class="calibre4"/>fencing,<br class="calibre4"/>judoka,<br class="calibre4"/>movie-star,<br class="calibre4"/>archaeologist,<br class="calibre4"/>and<br class="calibre4"/>President of the United States.</p>
+<p class="center2">And is getting frighteningly close to the end of her list.</p>
+<p class="center1">Never mistake the movie for the book.</p>
+</body></html>
