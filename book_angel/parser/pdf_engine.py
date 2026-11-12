@@ -24,27 +24,30 @@ class PdfBook:
 def parse_pdf(path: Path | str) -> PdfBook:
     """Parse a PDF file into a PdfBook dataclass."""
     path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"PDF file not found: {path}")
+
     try:
-        reader = PdfReader(str(path))
-        meta = reader.metadata or {}
-        title = (meta.title if getattr(meta, "title", None) else None) or path.stem or "Untitled PDF"
-        author = (meta.author if getattr(meta, "author", None) else None) or "Unknown"
+        with PdfReader(str(path)) as reader:
+            meta = reader.metadata or {}
+            title = (getattr(meta, "title", None) or "").strip() or path.stem or "Untitled PDF"
+            author = (getattr(meta, "author", None) or "").strip() or "Unknown"
 
-        pages: list[str] = []
-        total_text = ""
-        for page in reader.pages:
-            extracted = page.extract_text() or ""
-            pages.append(extracted)
-            total_text += extracted.strip()
+            pages: list[str] = []
+            total_text = ""
+            for page in reader.pages:
+                extracted = page.extract_text() or ""
+                pages.append(extracted)
+                total_text += extracted.strip()
 
-        return PdfBook(
-            file_path=path,
-            title=title,
-            author=author,
-            page_count=len(reader.pages),
-            pages=pages,
-            is_scanned_or_empty=(len(total_text) == 0),
-        )
+            return PdfBook(
+                file_path=path,
+                title=title,
+                author=author,
+                page_count=len(reader.pages),
+                pages=pages,
+                is_scanned_or_empty=(len(total_text) == 0),
+            )
     except Exception:
         return PdfBook(
             file_path=path,

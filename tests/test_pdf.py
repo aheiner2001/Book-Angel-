@@ -1,4 +1,5 @@
 from pathlib import Path
+import pytest
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, NameObject, DictionaryObject
 from book_angel.parser.pdf_engine import parse_pdf, PdfBook
@@ -101,3 +102,9 @@ def test_parse_corrupt_pdf(tmp_path: Path):
     assert book.is_scanned_or_empty
     assert book.page_count == 0
     assert book.pages == []
+
+
+def test_parse_nonexistent_pdf(tmp_path: Path):
+    missing_path = tmp_path / "nonexistent.pdf"
+    with pytest.raises(FileNotFoundError, match="PDF file not found"):
+        parse_pdf(missing_path)
