@@ -1,0 +1,36 @@
+# Book-Angel Content Rules Configuration
+# Generated based on your custom guidelines.
+
+# 1. Custom Rules (Surgical Scalpel)
+custom_rules:
+  - "Surgical Scalpel: Keep 95%+ of the prose identical. Do NOT rewrite paragraphs for style. Characters being in each other's rooms or private spaces is completely fine—preserve their conversation, emotional depth, and connection."
+  - "Jane Austen Romance: Kissing is fine, but keep it soft, sweet, and meaningful. Tone down heavy physical lust, breathless panting, and clutching."
+  - "Clean Cut on Intimacy: Absolutely no explicit sex or bodily textures. When intimacy escalates, preserve their verbal declarations of love, end with a tender embrace or soft kiss, and cleanly transition to the next scene without inferring physical acts."
+  - "Sweet Memories: If a character reflects on romance later, let them remember it sweetly ('that kiss was wonderful') rather than with physical lust."
+  - "Same-Sex Themes: Adapt romantic same-sex feelings or interactions into natural heterosexual dynamics (by adapting gender/pronouns) or deep brotherly/platonic loyalty."
+  - "Adventure Action: Keep sword fights, battles, and peril exciting. Only soften graphic gore, dismemberment, and viscera."
+
+# 2. Character & Gender Transformations
+character_mappings:
+  - original_name: "Julian"
+    new_name: "Julia"
+    new_gender: "female"
+    pronouns: "she/her/hers"
+    instruction: "Transform Julian into a female love interest named Julia. Adapt all pronouns (he->she, him->her, his->her/hers) and physical descriptors so the relationship with the protagonist is completely natural."
+
+# 3. Policy Levels
+romance_level: mild
+violence_level: adventure
+language_level: cleaned
+
+# 4. Omitted Topics
+omitted_topics:
+  - explicit sexual encounters
+  - graphic gore or torture
+
+# 5. Few-Shot Examples (Tone Guide)
+examples:
+  - before: "He closed the bedroom door behind him and pulled her onto the mattress. His hands slid beneath her tunic, feeling the heat of her bare skin as his mouth moved hungrily down her throat. She arched into him as their breathing turned ragged, losing themselves in each other until late into the night."
+    after: "He closed the bedroom door behind him and sat beside her on the bed, taking both of her hands in his. They talked softly for hours in the candlelight, speaking of the journey ahead and everything they had endured together. Looking into her eyes, he leaned in and placed a tender, lingering kiss upon her lips. She rested her head against his shoulder, finding peace in the quiet warmth of the room as the candles burned down."
+  - before: "He couldn't get the memory of their bodies pressed together out of his head, aching for the heat of her touch and the wild way she had gasped against his chest."
+    after: "He couldn't get the memory of that evening out of his head. That kiss had been wonderful, and knowing she cared for him brought a quiet warmth that stayed with him through the day."
