@@ -47,6 +47,27 @@ def get_project_rules_path() -> Path:
     return get_default_rules_path()
 
 
+def get_plain_text_rules_path() -> Path:
+    """Get the path to rules.txt, checking local directory first."""
+    local_txt = Path.cwd() / "rules.txt"
+    if local_txt.exists():
+        return local_txt
+    user_txt = Path.home() / ".book-angel" / "rules.txt"
+    if user_txt.exists():
+        return user_txt
+    return local_txt
+
+
+def load_plain_text_rules(path: Path | str | None = None) -> str | None:
+    """Read plain text rules if rules.txt exists and is not empty."""
+    p = Path(path) if path else get_plain_text_rules_path()
+    if p.exists():
+        content = p.read_text(encoding="utf-8").strip()
+        if content:
+            return content
+    return None
+
+
 def open_file_in_editor(path: Path | str) -> None:
     """Open a file in the user's default system editor (Cursor, VS Code, or TextEdit)."""
     p = Path(path)
@@ -105,8 +126,8 @@ def load_rules_yaml(path: Path | str) -> RulesConfig:
     )
 
 
-def generate_rules_markdown(config: RulesConfig) -> str:
-    """Generate Markdown instructions for editor agents from RulesConfig."""
+def generate_rules_markdown(config: RulesConfig, raw_text: str | None = None) -> str:
+    """Generate Markdown instructions for editor agents from RulesConfig and optional raw text."""
     lines = [
         "# Book-Angel Content Rules",
         "",
@@ -118,6 +139,14 @@ def generate_rules_markdown(config: RulesConfig) -> str:
         "> - If a sentence or paragraph does not violate any rule, do NOT touch a single word.",
         "",
     ]
+
+    plain_rules = raw_text if raw_text is not None else load_plain_text_rules()
+    if plain_rules:
+        lines.append("## Plain-English User Rules (from rules.txt)")
+        lines.append("Follow these exact instructions provided directly by the user:")
+        lines.append("")
+        lines.append(plain_rules)
+        lines.append("")
 
     if config.custom_rules:
         lines.append("## Custom Rules")

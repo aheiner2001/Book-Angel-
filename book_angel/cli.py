@@ -12,6 +12,7 @@ from book_angel.config import (
     CharacterMapping,
     RulesConfig,
     get_default_rules_path,
+    get_plain_text_rules_path,
     load_rules_yaml,
     open_file_in_editor,
     save_rules_yaml,
@@ -181,8 +182,8 @@ def run_interactive_menu() -> None:
     print(f"  • Export Directory: {get_default_export_dir()}")
     print("-" * 60)
     print("[1] 📂 Open a Book (Opens Mac Finder dialog to select EPUB/PDF)")
-    print("[2] ⚙️  Configure Rules & Character Transformations")
-    print("[3] 📝 Open rules.yaml in Text Editor / Cursor")
+    print("[2] 📝 Open rules.txt (Paste your plain-English rules)")
+    print("[3] ⚙️  Open rules.yaml (Advanced configuration)")
     print("[4] 🔍 Review Chunk Diffs")
     print("[5] 📦 Export Clean Book to Downloads")
     print("[Q] ❌ Quit")
@@ -193,10 +194,14 @@ def run_interactive_menu() -> None:
     except (EOFError, KeyboardInterrupt):
         return
 
+    txt_rules = get_plain_text_rules_path()
     if choice == "1":
         main(["unpack"])
     elif choice == "2":
-        main(["config"])
+        if not txt_rules.exists():
+            txt_rules.write_text("# Paste your plain-English rules here:\n", encoding="utf-8")
+        open_file_in_editor(txt_rules)
+        print(f"Opened {txt_rules} in your editor. Paste your rules and save!")
     elif choice == "3":
         open_file_in_editor(rules_path)
         print(f"Opened {rules_path} in your editor.")
