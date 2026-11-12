@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+import posixpath
+import urllib.parse
 import xml.etree.ElementTree as ET
 import zipfile
 
@@ -26,9 +28,21 @@ class EpubBook:
     chapters: list[EpubChapter] = field(default_factory=list)
     raw_archive: zipfile.ZipFile | None = None
 
+    def close(self) -> None:
+        if self.raw_archive:
+            self.raw_archive.close()
+            self.raw_archive = None
 
-def parse_epub(path: Path) -> EpubBook:
+    def __enter__(self) -> EpubBook:
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        self.close()
+
+
+def parse_epub(path: Path | str) -> EpubBook:
     """Parse an EPUB file into an EpubBook dataclass."""
+    path = Path(path)
     try:
         zf = zipfile.ZipFile(path, "r")
     except Exception:
@@ -100,21 +114,21 @@ def parse_epub(path: Path) -> EpubBook:
 
     if cover_id and cover_id in manifest:
         cover_rel = manifest[cover_id]["href"]
-        cover_full = f"{opf_dir}/{cover_rel}".lstrip("/")
+        cover_full = posixpath.normpath(f"{opf_dir}/{urllib.parse.unquote(cover_rel.split('#')[0])}").lstrip("/")
         if cover_full in namelist:
             cover_bytes = zf.read(cover_full)
-            cover_filename = Path(cover_rel).name
-    elif not cover_bytes:
+            cover_filename = Path(urllib.parse.unquote(cover_rel)).name
+    if not cover_bytes:
         # Fallback: scan manifest for images matching cover heuristics
         for item_id, item_data in manifest.items():
             if item_data.get("media-type", "").startswith("image/") and (
                 "cover" in item_id.lower() or "cover" in item_data.get("href", "").lower()
             ):
                 cover_rel = item_data["href"]
-                cover_full = f"{opf_dir}/{cover_rel}".lstrip("/")
+                cover_full = posixpath.normpath(f"{opf_dir}/{urllib.parse.unquote(cover_rel.split('#')[0])}").lstrip("/")
                 if cover_full in namelist:
                     cover_bytes = zf.read(cover_full)
-                    cover_filename = Path(cover_rel).name
+                    cover_filename = Path(urllib.parse.unquote(cover_rel)).name
                     break
 
     chapters: list[EpubChapter] = []
@@ -122,7 +136,7 @@ def parse_epub(path: Path) -> EpubBook:
         if ref in manifest:
             ch_href = manifest[ref]["href"]
             clean_ch_href = ch_href.split("#")[0]
-            ch_full = f"{opf_dir}/{clean_ch_href}".lstrip("/")
+            ch_full = posixpath.normpath(f"{opf_dir}/{urllib.parse.unquote(clean_ch_href)}").lstrip("/")
             if ch_full in namelist:
                 content_text = zf.read(ch_full).decode("utf-8", errors="replace")
                 chapters.append(

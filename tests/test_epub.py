@@ -134,3 +134,104 @@ def test_parse_corrupt_epub(tmp_path: Path):
         # missing container.xml
     book = parse_epub(corrupt_path)
     assert book.title == "Corrupt EPUB"
+
+
+def test_path_normalization_and_url_decoding(tmp_path: Path):
+    epub_path = tmp_path / "normalized.epub"
+    with zipfile.ZipFile(epub_path, "w") as zf:
+        zf.writestr("mimetype", "application/epub+zip")
+        zf.writestr(
+            "META-INF/container.xml",
+            """<?xml version="1.0"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>""",
+        )
+        opf_content = """<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Normalized Paths Book</dc:title>
+  </metadata>
+  <manifest>
+    <item id="cov" href="../images/My%20Cover.jpg" media-type="image/jpeg" properties="cover-image"/>
+    <item id="c1" href="../text/Chapter%201.xhtml#intro" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine>
+    <itemref idref="c1"/>
+  </spine>
+</package>"""
+        zf.writestr("OEBPS/content/content.opf", opf_content)
+        zf.writestr("OEBPS/images/My Cover.jpg", b"NORMCOVERBYTES")
+        zf.writestr("OEBPS/text/Chapter 1.xhtml", "<html><body><p>Normalized Content</p></body></html>")
+
+    book = parse_epub(epub_path)
+    assert book.cover_bytes == b"NORMCOVERBYTES"
+    assert book.cover_filename == "My Cover.jpg"
+    assert len(book.chapters) == 1
+    assert "Normalized Content" in book.chapters[0].content
+
+
+def test_epub_lifecycle_and_context_manager(tmp_path: Path):
+    epub_path = tmp_path / "lifecycle.epub"
+    create_dummy_epub(epub_path, encrypted=False)
+
+    with parse_epub(epub_path) as book:
+        assert book.raw_archive is not None
+        assert not book.raw_archive.fp is None
+
+    assert book.raw_archive is None
+
+    # Idempotent close
+    book.close()
+    assert book.raw_archive is None
+
+
+def test_cover_fallback_when_cover_id_missing_in_archive(tmp_path: Path):
+    epub_path = tmp_path / "fallback.epub"
+    with zipfile.ZipFile(epub_path, "w") as zf:
+        zf.writestr("mimetype", "application/epub+zip")
+        zf.writestr(
+            "META-INF/container.xml",
+            """<?xml version="1.0"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>""",
+        )
+        opf_content = """<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Fallback Book</dc:title>
+    <meta name="cover" content="missing-cover-id"/>
+  </metadata>
+  <manifest>
+    <item id="missing-cover-id" href="images/missing.jpg" media-type="image/jpeg"/>
+    <item id="real-cover" href="images/cover_fallback.png" media-type="image/png"/>
+    <item id="ch1" href="ch1.xhtml" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine>
+    <itemref idref="ch1"/>
+  </spine>
+</package>"""
+        zf.writestr("OEBPS/content.opf", opf_content)
+        # Note: missing.jpg is NOT written to archive
+        zf.writestr("OEBPS/images/cover_fallback.png", b"FALLBACKCOVER")
+        zf.writestr("OEBPS/ch1.xhtml", "<html><body><p>Chapter</p></body></html>")
+
+    book = parse_epub(epub_path)
+    assert book.cover_bytes == b"FALLBACKCOVER"
+    assert book.cover_filename == "cover_fallback.png"
+
+
+def test_parse_epub_with_str_path(tmp_path: Path):
+    epub_path = tmp_path / "str_path.epub"
+    create_dummy_epub(epub_path, encrypted=False)
+
+    book = parse_epub(str(epub_path))
+    assert isinstance(book.file_path, Path)
+    assert book.title == "Test Book"
+    assert book.cover_bytes == b"FAKECONTENTCOVER"
+    book.close()
