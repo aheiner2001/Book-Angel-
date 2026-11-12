@@ -31,6 +31,8 @@ class StagingWorkspace:
         cover_bytes: bytes | None,
         rules: RulesConfig,
         chunks: list[BookChunk],
+        source_file: Path | str | None = None,
+        chapter_map: dict | None = None,
     ) -> None:
         self.chunks_dir.mkdir(parents=True, exist_ok=True)
         self.originals_dir.mkdir(parents=True, exist_ok=True)
@@ -41,6 +43,23 @@ class StagingWorkspace:
             "author": author,
             "chunk_count": len(chunks),
         }
+
+        # If source file provided, copy to workspace and record format
+        if source_file:
+            src_p = Path(source_file)
+            if src_p.exists():
+                ext = src_p.suffix.lstrip(".").lower()
+                meta["source_format"] = ext
+                target_name = "source.epub" if ext == "epub" else src_p.name
+                meta["source_file"] = target_name
+                dest = self.root / target_name
+                if dest.resolve() != src_p.resolve():
+                    import shutil
+                    shutil.copy2(src_p, dest)
+
+        if chapter_map:
+            meta["chapter_map"] = chapter_map
+
         with open(self.root / "meta.json", "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
 

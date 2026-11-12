@@ -337,7 +337,23 @@ def main(argv: list[str] | None = None) -> None:
                     )
                     chunks.extend(c)
                     chunk_id += len(c)
-                ws.initialize(epub.title, epub.author, epub.cover_bytes, rules_cfg, chunks)
+                chapter_map = {
+                    str(idx): {
+                        "idref": ch.idref,
+                        "href": ch.href,
+                        "archive_path": ch.archive_path or ch.href,
+                    }
+                    for idx, ch in enumerate(epub.chapters, 1)
+                }
+                ws.initialize(
+                    epub.title,
+                    epub.author,
+                    epub.cover_bytes,
+                    rules_cfg,
+                    chunks,
+                    source_file=book_path,
+                    chapter_map=chapter_map,
+                )
                 print(f"Successfully unpacked {len(chunks)} chunks into {ws.chunks_dir}")
                 print(f"Rules applied from: {rules_path}")
 
@@ -348,7 +364,14 @@ def main(argv: list[str] | None = None) -> None:
                 sys.exit(1)
             joined = "\n\n".join(pdf.pages)
             chunks = chunk_text(joined, chapter_title=pdf.title, chapter_idx=1)
-            ws.initialize(pdf.title, pdf.author, None, rules_cfg, chunks)
+            ws.initialize(
+                pdf.title,
+                pdf.author,
+                None,
+                rules_cfg,
+                chunks,
+                source_file=book_path,
+            )
             print(f"Successfully unpacked {len(chunks)} chunks into {ws.chunks_dir}")
         else:
             print(

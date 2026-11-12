@@ -193,3 +193,79 @@ def test_export_safe_slug_with_special_characters(tmp_path: Path):
     assert ":" not in out_file.name
     assert "?" not in out_file.name
     assert "#" not in out_file.name
+
+
+def test_export_epub_apple_books_compatibility(tmp_path: Path):
+    ws = StagingWorkspace(base_dir=tmp_path, book_slug="apple-books-test")
+    ws.initialize(
+        title="Apple Books Guide",
+        author="Apple Author",
+        cover_bytes=b"FAKECOVERIMAGE",
+        rules=RulesConfig(),
+        chunks=[
+            BookChunk(chunk_id=1, chapter_idx=1, scene_idx=1, chapter_title="Introduction", body="Opening content &nbsp; with entity.")
+        ]
+    )
+
+    out_dir = tmp_path / "apple_dist"
+    out_file = export_book(workspace=ws, output_dir=out_dir, export_format="epub")
+
+    assert out_file.exists()
+    with zipfile.ZipFile(out_file, "r") as zf:
+        infolist = zf.infolist()
+        # 1. First file must be uncompressed mimetype
+        assert infolist[0].filename == "mimetype"
+        assert infolist[0].compress_type == zipfile.ZIP_STORED
+        assert zf.read("mimetype") == b"application/epub+zip"
+
+        # 2. Must contain Apple Books mandatory files
+        assert "META-INF/container.xml" in zf.namelist()
+        assert "OEBPS/nav.xhtml" in zf.namelist()
+        assert "OEBPS/toc.ncx" in zf.namelist()
+        assert "OEBPS/style.css" in zf.namelist()
+
+        # 3. Content.opf validations
+        opf = zf.read("OEBPS/content.opf").decode("utf-8")
+        assert 'properties="nav"' in opf
+        assert "<dc:language>en</dc:language>" in opf
+        assert "dcterms:modified" in opf
+        assert '<spine toc="ncx">' in opf
+
+        # 4. XML compliance: unescaped &nbsp; replaced with &#160;
+        ch1 = zf.read("OEBPS/chapter1.xhtml").decode("utf-8")
+        assert "&nbsp;" not in ch1
+        assert "&#160;" in ch1
+
+
+def test_export_patched_source_epub(tmp_path: Path):
+    from tests.test_epub import create_dummy_epub
+
+    src_epub = create_dummy_epub(tmp_path / "source.epub")
+    ws = StagingWorkspace(base_dir=tmp_path, book_slug="patch-test")
+    ws.initialize(
+        title="Source Book",
+        author="Source Author",
+        cover_bytes=None,
+        rules=RulesConfig(),
+        chunks=[
+            BookChunk(chunk_id=1, chapter_idx=1, scene_idx=1, chapter_title="ch1", body="Hello world chapter text.")
+        ],
+        source_file=src_epub,
+        chapter_map={"1": {"idref": "ch1", "href": "ch1.xhtml", "archive_path": "OEBPS/ch1.xhtml"}},
+    )
+
+    # Edit chunk in workspace
+    (ws.chunks_dir / "chunk_001.txt").write_text(
+        "<!-- chunk_id: 001 | chapter: 1 | scene: 1 | title: ch1 -->\n\nReplaced clean text for chapter 1.",
+        encoding="utf-8"
+    )
+
+    out_dir = tmp_path / "patched_dist"
+    out_file = export_book(workspace=ws, output_dir=out_dir, export_format="epub", title_suffix="[Clean Edition]")
+
+    assert out_file.exists()
+    book = parse_epub(out_file)
+    assert book.title == "Source Book [Clean Edition]"
+    assert "Replaced clean text for chapter 1." in book.chapters[0].content
+    book.close()
+

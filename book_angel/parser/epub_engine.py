@@ -15,6 +15,7 @@ class EpubChapter:
     href: str
     title: str
     content: str
+    archive_path: str = ""
 
 
 @dataclass
@@ -145,6 +146,7 @@ def parse_epub(path: Path | str) -> EpubBook:
                         href=ch_href,
                         title=ref,
                         content=content_text,
+                        archive_path=ch_full,
                     )
                 )
 
