@@ -1,6 +1,7 @@
 """Staging workspace manager for Book-Angel."""
 from __future__ import annotations
 from dataclasses import dataclass
+import difflib
 import json
 from pathlib import Path
 from book_angel.config import RulesConfig, generate_rules_markdown
@@ -70,6 +71,8 @@ class StagingWorkspace:
             orig_text = original_file.read_text(encoding="utf-8")
             mod_text = chunk_file.read_text(encoding="utf-8")
             if orig_text != mod_text:
+                if not chunk_file.stem.split("_")[-1].isdigit():
+                    continue
                 chunk_id = int(chunk_file.stem.split("_")[-1])
                 diffs.append(
                     ChunkDiff(
@@ -87,3 +90,19 @@ class StagingWorkspace:
         target_file = self.chunks_dir / filename
         if orig_file.exists():
             target_file.write_text(orig_file.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+def generate_unified_diff(diff: ChunkDiff) -> str:
+    """Generate a formatted unified diff string comparing original vs modified chunk text."""
+    orig_lines = diff.original_text.splitlines(keepends=True)
+    mod_lines = diff.modified_text.splitlines(keepends=True)
+    orig_lines = [line if line.endswith("\n") else line + "\n" for line in orig_lines]
+    mod_lines = [line if line.endswith("\n") else line + "\n" for line in mod_lines]
+    diff_generator = difflib.unified_diff(
+        orig_lines,
+        mod_lines,
+        fromfile=f"original/chunk_{diff.chunk_id:03d}.txt",
+        tofile=f"edited/chunk_{diff.chunk_id:03d}.txt",
+    )
+    return "".join(diff_generator)
+
