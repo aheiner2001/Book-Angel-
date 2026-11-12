@@ -177,6 +177,21 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def generate_ai_prompt(ws: StagingWorkspace) -> str:
+    """Generate the standardized agent instructions for processing and exporting."""
+    return (
+        f"Please process the book chunks in:\n"
+        f"{ws.chunks_dir}\n\n"
+        f"Follow the exact rules and guidelines in:\n"
+        f"{ws.root / 'rules.md'}\n\n"
+        f"Instructions for AI:\n"
+        f"1. Read the rules in rules.md and inspect each chunk file in the chunks directory.\n"
+        f"2. Surgically modify only the specific sentences that conflict with the rules. Keep all other text 100% identical.\n"
+        f"3. When you finish modifying the chunks, automatically export the clean book directly to ~/Downloads by running:\n"
+        f"   cd \"{ws.base_dir}\" && book-angel export\n"
+    )
+
+
 def run_interactive_menu() -> None:
     """Display the streamlined Book-Angel launcher."""
     staging_root = Path.cwd() / ".book-angel" / "staging"
@@ -199,20 +214,52 @@ def run_interactive_menu() -> None:
 
     if staged_slugs:
         latest = staged_slugs[0]
-        print(f"Active Unpacked Book: '{latest}'")
-        print("[1] 📂 Open a DIFFERENT Book (Opens Mac Finder)")
-        print("[2] 📦 Export Clean Book to Downloads (~/Downloads/)")
+        ws = StagingWorkspace(base_dir=Path.cwd(), book_slug=latest)
+        total_chunks = len(list(ws.chunks_dir.glob("chunk_*.txt"))) if ws.chunks_dir.exists() else 0
+        diffs = ws.get_modified_chunks()
+
+        print(f"📖 Active Unpacked Book: '{latest}'")
+        print(f"   • Total Chunks: {total_chunks}")
+        print(f"   • Modified Chunks: {len(diffs)}")
+        print(f"   • Chunks Folder: {ws.chunks_dir}")
+        print("-" * 65)
+        print("[1] 📋 Copy AI Prompt to Clipboard (for Gemini CLI / Cursor / Local AI)")
+        print("[2] 📂 Open a DIFFERENT Book (Opens Mac Finder)")
+        print("[3] 📦 Export Clean Book to Downloads (~/Downloads/)")
+        print("[4] 🔍 Review Chunk Diffs")
         print("[Q] ❌ Quit")
         print("=" * 65)
         try:
-            choice = input("Select an option [1, 2, Q] (Default: 2): ").strip().lower()
+            choice = input("Select an option [1-4, Q] (Default: 1): ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             return
 
-        if choice == "1":
+        if choice in ("", "1"):
+            ai_prompt = generate_ai_prompt(ws)
+            copied = copy_to_clipboard(ai_prompt)
+            print("\n" + "=" * 65)
+            if copied:
+                print("📋 PROMPT AUTOMATICALLY COPIED TO CLIPBOARD!")
+                print("   👉 Switch to Gemini CLI (or Cursor / local AI) and press Cmd + V (Paste)!")
+                print("   The AI will process the chunks and automatically export the clean book to ~/Downloads!")
+            else:
+                print("📋 Copy and paste this prompt into Gemini CLI / Cursor / Local AI:")
+            print("-" * 65)
+            print(ai_prompt)
+            print("=" * 65)
+            if sys.stdin.isatty():
+                try:
+                    user_act = input("\n👉 Note: The AI will automatically export the book when done. Or press [Enter] to export manually (or 'q' to exit): ").strip().lower()
+                    if user_act not in ("q", "quit", "exit"):
+                        main(["export"])
+                except (EOFError, KeyboardInterrupt):
+                    pass
+        elif choice == "2":
             main(["unpack"])
-        elif choice in ("", "2"):
+        elif choice == "3":
             main(["export"])
+        elif choice == "4":
+            main(["review"])
         elif choice in ("q", "quit", "exit"):
             sys.exit(0)
         return
@@ -310,13 +357,7 @@ def main(argv: list[str] | None = None) -> None:
             )
             sys.exit(1)
 
-        ai_prompt = (
-            f"Please process the book chunks in:\n"
-            f"{ws.chunks_dir}\n\n"
-            f"Follow the exact rules and guidelines in:\n"
-            f"{ws.root / 'rules.md'}\n\n"
-            f"Inspect each chunk file and surgically modify only the specific sentences that conflict with the rules. Keep all other text 100% identical."
-        )
+        ai_prompt = generate_ai_prompt(ws)
         copied = copy_to_clipboard(ai_prompt)
         print("\n" + "=" * 65)
         print("🎉 BOOK UNPACKED AND READY!")
@@ -327,16 +368,17 @@ def main(argv: list[str] | None = None) -> None:
         print("-" * 65)
         if copied:
             print("📋 PROMPT AUTOMATICALLY COPIED TO CLIPBOARD!")
-            print("   👉 Just open Gemini (or Cursor) and press Cmd + V!")
+            print("   👉 Open Gemini CLI (or Cursor / local AI) and press Cmd + V (Paste)!")
+            print("   The AI will process the chunks and automatically export the clean book to ~/Downloads!")
         else:
-            print("📋 Copy and paste this prompt into Gemini / Antigravity / Cursor:")
+            print("📋 Copy and paste this prompt into Gemini CLI / Cursor / Local AI:")
         print("-" * 65)
         print(ai_prompt)
         print("=" * 65)
 
         if sys.stdin.isatty():
             try:
-                user_act = input("\n👉 Once Gemini finishes editing, press [Enter] here to export directly to ~/Downloads (or type 'q' to exit): ").strip().lower()
+                user_act = input("\n👉 Note: The AI will automatically export the clean book when done. Or press [Enter] to export manually (or 'q' to exit): ").strip().lower()
                 if user_act not in ("q", "quit", "exit"):
                     out_file = export_book(
                         ws,

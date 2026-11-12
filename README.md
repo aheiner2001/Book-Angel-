@@ -14,10 +14,10 @@ In your `Book-Angel-` folder, you have two simple files:
 
 2. 📖 **`Book-Angel.command`**:
    - Double-click to start!
-   - Mac Finder opens immediately $\rightarrow$ click your EPUB or PDF book $\rightarrow$ click **Open**.
-   - Your book is unpacked and the Gemini prompt is **automatically copied to your clipboard**.
-   - Open Gemini and press **`Cmd + V`** (Enter).
-   - When Gemini finishes, return to the window and press **Enter** to export directly to `~/Downloads`!
+   - If starting fresh: Mac Finder opens immediately $\rightarrow$ click your EPUB or PDF book $\rightarrow$ click **Open**.
+   - If you already unpacked a book: Simply press **Enter** (Option `[1]`) to copy the AI prompt to your clipboard anytime!
+   - Open Gemini (or Cursor) and press **`Cmd + V`** (Enter).
+   - **Automatic Export**: Gemini reads your rules, edits the book chunks, and automatically exports the clean copy straight to your `~/Downloads` folder!
 
 ---
 
@@ -27,13 +27,13 @@ In your `Book-Angel-` folder, you have two simple files:
 1. Edit-Rules.command        ──► Paste plain-English rules in TextEdit
               │
               ▼
-2. Book-Angel.command        ──► Opens Mac Finder to select your book (.epub/.pdf)
+2. Book-Angel.command        ──► Unpacks book or copies prompt (Option [1])
               │
               ▼
 3. Auto-Copied to Clipboard  ──► Press Cmd + V in Gemini / Cursor
               │
               ▼
-4. Press [Enter] to Export   ──► Clean EPUB/PDF ready in ~/Downloads!
+4. AI Auto-Exports Book      ──► Clean EPUB/PDF ready in ~/Downloads!
 ```
 
 ---

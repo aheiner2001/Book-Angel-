@@ -5,7 +5,7 @@ import zipfile
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, NameObject, DictionaryObject
 
-from book_angel.cli import create_parser, main
+from book_angel.cli import create_parser, generate_ai_prompt, main, run_interactive_menu
 from book_angel.config import RulesConfig
 from book_angel.parser.chunker import BookChunk
 from book_angel.staging import StagingWorkspace
@@ -301,3 +301,35 @@ def test_cli_status_with_workspaces(tmp_path, monkeypatch, capsys):
     captured = capsys.readouterr()
     assert "Workspace: book-a | Modified Chunks: 0" in captured.out
     assert "Workspace: book-b | Modified Chunks: 1" in captured.out
+
+
+def test_generate_ai_prompt_contents(tmp_path):
+    ws = StagingWorkspace(base_dir=tmp_path, book_slug="prompt-test")
+    ws.initialize("Test Title", "Author", None, RulesConfig(), [
+        BookChunk(1, 1, 1, "Ch1", "Text")
+    ])
+    prompt = generate_ai_prompt(ws)
+    assert "Please process the book chunks in:" in prompt
+    assert str(ws.chunks_dir) in prompt
+    assert "rules.md" in prompt
+    assert "book-angel export" in prompt
+
+
+def test_cli_interactive_menu_copy_prompt(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    ws = StagingWorkspace(base_dir=tmp_path, book_slug="interactive-test")
+    ws.initialize("Interactive Title", "Author", None, RulesConfig(), [
+        BookChunk(1, 1, 1, "Ch1", "Initial text")
+    ])
+
+    # Simulate user pressing "1" or Enter
+    monkeypatch.setattr("builtins.input", lambda *args, **kwargs: "1")
+
+    run_interactive_menu()
+
+    captured = capsys.readouterr()
+    assert "Active Unpacked Book: 'interactive-test'" in captured.out
+    assert "[1] 📋 Copy AI Prompt to Clipboard" in captured.out
+    assert "PROMPT" in captured.out
+    assert "book-angel export" in captured.out
+
