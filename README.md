@@ -1,39 +1,43 @@
 # 📖 Book-Angel
 
-**Book-Angel** is an intelligent book transformation and filtering companion designed to run alongside AI agents (such as Google Antigravity CLI and Cursor IDE). It allows you to safely adapt EPUB and PDF books according to custom content guidelines (e.g., softening graphic romance/kissing, reducing violence or gore, omitting specific themes) while preserving original cover art, typography, and book formatting.
+**Book-Angel** is an intelligent book transformation and filtering companion designed to run alongside AI agents (such as Google Antigravity CLI and Cursor IDE). It allows you to safely adapt EPUB and PDF books according to custom content guidelines (e.g., softening graphic romance/kissing, reducing violence or gore, adapting characters and genders) while preserving original cover art, typography, and book formatting.
 
 ---
 
-## 🚀 Quick Setup & Installation
+## ⚡ Super-Easy Setup (Zero Path Typing!)
 
-### 1. Requirements
-- Python 3.10+
-- Terminal / CLI (macOS, Linux, or Windows)
-- (Optional) [Google Antigravity CLI](https://github.com) or [Cursor IDE](https://www.cursor.com)
+### Option A: Double-Click Launcher (macOS)
+Inside this `Book-Angel-` folder, simply **double-click** the file:
+```text
+Book-Angel.command
+```
+This opens Terminal automatically, installs any needed components, and presents a friendly menu:
+```text
+============================================================
+              📖  Welcome to Book-Angel
+============================================================
+Active Rules File: ./rules.yaml
+  • Romance Level:    mild
+  • Violence Level:   adventure
+  • Character Rules:  1 configured
+  • Export Directory: ~/Downloads
+------------------------------------------------------------
+[1] 📂 Open a Book (Opens Mac Finder dialog to select EPUB/PDF)
+[2] ⚙️  Configure Rules & Character Transformations
+[3] 📝 Open rules.yaml in Text Editor / Cursor
+[4] 🔍 Review Chunk Diffs
+[5] 📦 Export Clean Book to Downloads
+[Q] ❌ Quit
+============================================================
+```
 
-### 2. Install the Python CLI
-Clone and install the package locally in editable mode:
-
+### Option B: Terminal Command
+Run `book-angel` anywhere in your terminal:
 ```bash
 cd Book-Angel-
 pip install -e .
+book-angel
 ```
-
-Verify the installation:
-```bash
-book-angel --version
-# Output: book-angel 0.1.0
-```
-
-### 3. Install as an Antigravity Custom Skill (Optional)
-To use Book-Angel directly within your Antigravity agent terminal (`agy`), copy or link the skill:
-
-```bash
-mkdir -p ~/.gemini/antigravity-cli/skills/book-angel
-cp skill/SKILL.md ~/.gemini/antigravity-cli/skills/book-angel/
-```
-
-Now you can invoke `/book-angel` directly in your agent chat!
 
 ---
 
@@ -43,151 +47,127 @@ Now you can invoke `/book-angel` directly in your agent chat!
 [Input Book (.epub / .pdf)]
            │
            ▼
-1. book-angel config        ──► Sets guidelines & before/after examples
+1. rules.yaml (in root)     ──► Edit rules, character mappings & examples
            │
            ▼
-2. book-angel unpack <file> ──► Extracts cover, styles, & chunks (<2,500 words)
+2. book-angel unpack        ──► Opens Mac Finder dialog to click and choose book
            │
            ▼
 3. Agent Processing         ──► Antigravity or Cursor Agent rewrites chunks
            │
            ▼
-4. book-angel review        ──► Approve, reject, or edit diffs interactively
+4. Visual Diff in Cursor    ──► Inspect red/green changes side-by-side
            │
            ▼
-5. book-angel export        ──► Packages final EPUB / PDF with original cover
+5. book-angel export        ──► Packages final EPUB / PDF directly to ~/Downloads
 ```
 
 ---
 
-### Step 1: Configure Your Rules & Examples
+### Step 1: Configure Your Rules & Character Transformations
 
-Run the configuration wizard to set your default guidelines:
+Right in the project root is `rules.yaml`. You can double click it or run:
 ```bash
-book-angel config
+book-angel config --open
 ```
 
-This creates or updates `~/.book-angel/rules.yaml`. You can open this file anytime to customize your policy levels, omitted topics, and few-shot examples:
+#### What you can customize:
 
 ```yaml
-romance_level: mild
-violence_level: adventure
-language_level: cleaned
-omitted_topics:
-  - passionate or explicit intimacy
-  - graphic gore
-custom_rules:
-  - Keep character banter and humor intact.
-examples:
-  - before: "He pulled her close, kissing her passionately on the lips against the door."
-    after: "He smiled softly and gave her a gentle kiss on the cheek before stepping back."
-```
+# 1. Policy Levels
+romance_level: mild        # mild | clean | moderate
+violence_level: adventure  # adventure (removes gore) | mild | clean
+language_level: cleaned    # cleaned | pg | original
 
-> **Tip:** Adding **before & after examples** teaches the AI the exact tone, replacement style, and restraint you prefer!
+# 2. Character & Gender Transformations (Character Swapping)
+# Seamlessly adapt a character's name and pronouns so all dialogue,
+# romance, and narrative interactions remain natural:
+character_mappings:
+  - original_name: "Julian"
+    new_name: "Julia"
+    new_gender: "female"
+    pronouns: "she/her/hers"
+    instruction: "Transform Julian into a female love interest named Julia. Adapt all pronouns (he->she, him->her, his->her/hers) and physical descriptors so the relationship with the protagonist is completely natural."
+
+# 3. Omitted Themes
+omitted_topics:
+  - graphic sexual content
+  - extreme gore or torture
+
+# 4. Few-Shot Examples (Teach the AI your exact style)
+examples:
+  - before: "He grabbed her roughly and crushed his mouth against hers in a fiery, desperate kiss."
+    after: "He reached out and gently took her hand, leaning in to give her a warm, affectionate kiss on the cheek."
+```
 
 ---
 
-### Step 2: Unpack Your Book
+### Step 2: Open Your Book (No Typing Paths!)
 
-Point Book-Angel to any EPUB or PDF file:
-
+Just run:
 ```bash
-book-angel unpack "path/to/my_book.epub"
+book-angel unpack
 ```
+Your native **Mac Finder window** pops up automatically. Navigate to your Downloads or Books folder, click your `.epub` or `.pdf` file, and click **Open**.
 
-What this does automatically:
-- Creates an isolated staging folder: `.book-angel/staging/<book-name>/`
-- Preserves the original cover image (`cover.jpg`)
-- Splits the text into natural chapters & scene chunks (`chunks/chunk_001.txt`, `chunk_002.txt`...)
-- Saves pristine, untouched copies in `.originals/` so changes can always be diffed or rolled back
+Book-Angel will:
+- Extract the book's cover image (`cover.jpg`)
+- Break the text into scene-preserving chunks (`<2,500 words`)
+- Save pristine copies in `.originals/` for side-by-side diffing
 
 ---
 
 ### Step 3: Run the AI Agent to Edit Chunks
 
-You can let the AI edit your book using either **Antigravity CLI** or **Cursor IDE**:
-
-#### Option A: In Antigravity CLI (`agy`)
-Simply prompt the agent:
-> *"Process the unpacked book in staging according to rules.md"*
-
-The agent will read `.book-angel/staging/<book-slug>/rules.md` and edit the chunk files in `chunks/`.
-
-#### Option B: In Cursor IDE
+#### In Cursor IDE:
 1. Open the `Book-Angel-` folder in Cursor.
 2. In Composer / Chat (`Cmd + I` or `Cmd + L`), prompt the agent:
    > *"Review all chunks in `.book-angel/staging/<book-slug>/chunks/` and modify them to follow the guidelines in `rules.md`."*
 3. The agent edits each chunk file right inside your workspace.
 
+#### In Antigravity CLI (`agy`):
+Prompt:
+> *"Review the unpacked chunks in staging according to rules.md"*
+
 ---
 
-### Step 4: Review Diffs & Approve Changes
+### Step 4: Review Changes Visually in Cursor
 
-Book-Angel provides two ways to inspect changes:
+1. Open **Cursor**.
+2. Click on the **Source Control (Git) icon** on the left sidebar (or press `Ctrl + Shift + G`).
+3. Click any modified chunk file (`chunk_001.txt`, `chunk_002.txt`).
+4. You will see a clear **side-by-side split screen**:
+   - **Left:** Original text (red lines removed).
+   - **Right:** Cleaned text (green lines added).
+5. If you want to tweak any sentence, you can edit directly in the file!
 
-#### 1. Interactive Terminal Review
+*(You can also run `book-angel review` in the terminal for colorized diffs).*
+
+---
+
+### Step 5: Export the Clean Book to Downloads
+
 Run:
 ```bash
-book-angel review
-```
-This shows syntax-highlighted terminal diffs for each modified chunk, allowing you to review line-by-line additions (`+`) and removals (`-`).
-
-#### 2. Visual Side-by-Side in Cursor / VS Code
-Because original files are preserved in `.originals/`, you can also open any chunk side-by-side or inspect changes using your editor's visual Git / Diff viewer.
-
----
-
-### Step 5: Export the Clean Book
-
-When you're ready, rebuild the book into your preferred format:
-
-```bash
-# Export as EPUB (Recommended - preserves responsive reading on Kindle / Apple Books / Kobo)
-book-angel export --format epub --suffix "[Clean Edition]"
-
-# Or export as PDF
-book-angel export --format pdf --suffix "[Clean Edition]"
+book-angel export
 ```
 
-Your clean edition will be saved in `dist/` (e.g., `dist/My_Book_Clean_Edition.epub`) with:
+Your clean edition will be saved directly into your **`~/Downloads`** folder:
+- `~/Downloads/My_Book_Clean_Edition.epub` (or `.pdf` with `--format pdf`)
 - ✅ Original cover art preserved
-- ✅ Internal typography, font styles, and layout intact
-- ✅ Updated book title and clean metadata
+- ✅ Responsive typography, font styles, and layout intact
+- ✅ Character names and gender adaptations smoothly applied
 
 ---
 
-## 📋 CLI Commands Reference
+## 📋 CLI Cheatsheet
 
-| Command | Description |
+| Command | Action |
 |---|---|
-| `book-angel config` | Run the interactive setup wizard for rules and examples. |
-| `book-angel unpack <file>` | Extract EPUB/PDF into structured staging chunks and save cover art. |
-| `book-angel status` | Check active staging workspaces and modified chunk counts. |
-| `book-angel review` | Walk through modified chunks in the terminal with colored diffs. |
-| `book-angel export` | Reassemble approved chunks into EPUB or PDF. |
-| `book-angel --version` | Display installed version. |
-
-### Optional Export Flags:
-- `--format`: Output format: `epub` (default) or `pdf`.
-- `--suffix`: Subtitle appended to book title (default: `"[Clean Edition]"`).
-- `--out`: Destination directory (default: `dist`).
-
----
-
-## 💡 Troubleshooting & Edge Cases
-
-- **DRM-Protected EPUBs**: If an EPUB has Adobe, Apple, or Amazon DRM encryption, `book-angel unpack` will display an informative message explaining that DRM must be removed prior to processing.
-- **Scanned / Image-Only PDFs**: If a PDF contains no selectable text (scanned page images), Book-Angel alerts you that OCR text extraction is required before chunking.
-- **Rolling Back a Chunk**: If an AI rewrite isn't what you wanted, you can revert any chunk back to its original state before exporting.
-
----
-
-## 🧪 Running Tests
-
-To verify that all components are working properly on your system:
-
-```bash
-pytest -v
-```
-
-All 63 unit and end-to-end integration tests should pass in under 1 second.
+| `book-angel` | Opens the interactive menu. |
+| `book-angel unpack` | Pops up macOS Finder to pick an EPUB or PDF. |
+| `book-angel config` | Interactive setup questionnaire. |
+| `book-angel config --open` | Opens `rules.yaml` directly in your default editor. |
+| `book-angel review` | Interactive terminal diff viewer. |
+| `book-angel export` | Exports clean book to `~/Downloads`. |
+| `book-angel status` | Shows staged books and modified chunk counts. |

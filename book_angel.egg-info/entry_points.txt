@@ -1,0 +1,2 @@
+[console_scripts]
+book-angel = book_angel.cli:main

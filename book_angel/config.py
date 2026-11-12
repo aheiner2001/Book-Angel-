@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import os
 from pathlib import Path
+import subprocess
 import yaml
 
 
@@ -13,6 +15,15 @@ class ExamplePair:
 
 
 @dataclass
+class CharacterMapping:
+    original_name: str
+    new_name: str
+    new_gender: str = "female"
+    pronouns: str = "she/her/hers"
+    instruction: str = ""
+
+
+@dataclass
 class RulesConfig:
     romance_level: str = "mild"
     violence_level: str = "adventure"
@@ -20,6 +31,32 @@ class RulesConfig:
     omitted_topics: list[str] = field(default_factory=list)
     custom_rules: list[str] = field(default_factory=list)
     examples: list[ExamplePair] = field(default_factory=list)
+    character_mappings: list[CharacterMapping] = field(default_factory=list)
+
+
+def get_default_rules_path() -> Path:
+    """Get the default global rules.yaml path in user config dir."""
+    return Path.home() / ".book-angel" / "rules.yaml"
+
+
+def get_project_rules_path() -> Path:
+    """Get the active rules path, preferring local rules.yaml if present."""
+    local = Path.cwd() / "rules.yaml"
+    if local.exists():
+        return local
+    return get_default_rules_path()
+
+
+def open_file_in_editor(path: Path | str) -> None:
+    """Open a file in the user's default system editor (Cursor, VS Code, or TextEdit)."""
+    p = Path(path)
+    if os.uname().sysname == "Darwin":
+        subprocess.run(["open", str(p)], check=False)
+    else:
+        try:
+            os.startfile(str(p))  # type: ignore[attr-defined]
+        except AttributeError:
+            subprocess.run(["xdg-open", str(p)], check=False)
 
 
 def save_rules_yaml(config: RulesConfig, path: Path | str) -> None:
@@ -37,12 +74,25 @@ def load_rules_yaml(path: Path | str) -> RulesConfig:
     if not p.exists():
         return RulesConfig()
     with open(p, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f) or {}
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict):
+        return RulesConfig()
 
     examples = [
         ExamplePair(before=ex["before"], after=ex["after"])
         for ex in data.get("examples", [])
         if isinstance(ex, dict) and "before" in ex and "after" in ex
+    ]
+    character_mappings = [
+        CharacterMapping(
+            original_name=cm.get("original_name", ""),
+            new_name=cm.get("new_name", ""),
+            new_gender=cm.get("new_gender", "female"),
+            pronouns=cm.get("pronouns", "she/her/hers"),
+            instruction=cm.get("instruction", ""),
+        )
+        for cm in data.get("character_mappings", [])
+        if isinstance(cm, dict) and cm.get("original_name") and cm.get("new_name")
     ]
     return RulesConfig(
         romance_level=data.get("romance_level", "mild"),
@@ -51,6 +101,7 @@ def load_rules_yaml(path: Path | str) -> RulesConfig:
         omitted_topics=data.get("omitted_topics", []),
         custom_rules=data.get("custom_rules", []),
         examples=examples,
+        character_mappings=character_mappings,
     )
 
 
@@ -73,6 +124,24 @@ def generate_rules_markdown(config: RulesConfig) -> str:
         lines.append("## Omitted Topics / Themes")
         for topic in config.omitted_topics:
             lines.append(f"- Do not include: {topic}")
+        lines.append("")
+
+    if config.character_mappings:
+        lines.append("## Character & Gender Transformations")
+        lines.append(
+            "Adapt the specified characters so all relationships, dialogue, and narrative interactions remain natural:"
+        )
+        lines.append("")
+        for cm in config.character_mappings:
+            lines.append(f"- **Transform Character '{cm.original_name}'** -> **'{cm.new_name}'**")
+            lines.append(f"  - Target Gender: {cm.new_gender}")
+            lines.append(f"  - Target Pronouns: {cm.pronouns}")
+            if cm.instruction:
+                lines.append(f"  - Guidance: {cm.instruction}")
+            else:
+                lines.append(
+                    f"  - Guidance: Replace all occurrences of '{cm.original_name}' with '{cm.new_name}', updating all associated pronouns and physical/gender descriptors naturally."
+                )
         lines.append("")
 
     if config.custom_rules:

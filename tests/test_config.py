@@ -82,3 +82,32 @@ def test_generate_markdown_with_defaults():
     assert "## Omitted Topics / Themes" not in md_content
     assert "## Custom Rules" not in md_content
     assert "### Few-Shot Editing Examples" not in md_content
+
+
+def test_character_mapping_roundtrip_and_markdown(tmp_path: Path):
+    from book_angel.config import CharacterMapping
+    cfg = RulesConfig(
+        character_mappings=[
+            CharacterMapping(
+                original_name="Julian",
+                new_name="Julia",
+                new_gender="female",
+                pronouns="she/her/hers",
+                instruction="Transform Julian into Julia naturally.",
+            )
+        ]
+    )
+    yaml_file = tmp_path / "rules_cm.yaml"
+    save_rules_yaml(cfg, yaml_file)
+    assert yaml_file.exists()
+
+    loaded = load_rules_yaml(yaml_file)
+    assert len(loaded.character_mappings) == 1
+    assert loaded.character_mappings[0].original_name == "Julian"
+    assert loaded.character_mappings[0].new_name == "Julia"
+    assert loaded.character_mappings[0].pronouns == "she/her/hers"
+
+    md = generate_rules_markdown(loaded)
+    assert "## Character & Gender Transformations" in md
+    assert "Transform Character 'Julian'** -> **'Julia'" in md
+    assert "Target Pronouns: she/her/hers" in md
