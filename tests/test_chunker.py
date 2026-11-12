@@ -18,39 +18,45 @@ def test_chunk_short_text():
 
 def test_chunk_splits_long_text_at_scene_break():
     """Verify that long text splits cleanly at standard scene breaks (***)."""
-    scene1 = "Word " * 60 + "\n\n***\n\n"
-    scene2 = "Other " * 60
+    scene1 = "Word " * 40 + "\n\n***\n\n"
+    scene2 = "Other " * 40
     full_text = scene1 + scene2
     chunks = chunk_text(full_text, chapter_title="Chapter 2", chapter_idx=2, max_words=50)
-    assert len(chunks) >= 2
+    assert len(chunks) == 2
     assert "Word" in chunks[0].body
     assert "Other" in chunks[1].body
+    assert len(chunks[0].body.split()) <= 50
+    assert len(chunks[1].body.split()) <= 50
 
 
 def test_chunk_various_scene_separators():
     """Verify that * * *, ---, - - -, and ___ are recognized as scene breaks."""
     separators = ["\n\n* * *\n\n", "\n\n---\n\n", "\n\n- - -\n\n", "\n\n___\n\n"]
     for sep in separators:
-        s1 = "Alpha " * 60
-        s2 = "Beta " * 60
+        s1 = "Alpha " * 40
+        s2 = "Beta " * 40
         text = s1 + sep + s2
         chunks = chunk_text(text, chapter_title="Chapter Test", chapter_idx=1, max_words=50)
         assert len(chunks) >= 2, f"Failed to split on separator {sep!r}"
         assert "Alpha" in chunks[0].body
         assert "Beta" in chunks[1].body
+        for c in chunks:
+            assert len(c.body.split()) <= 50
 
 
 def test_chunk_splits_at_paragraphs_when_no_scene_breaks():
     """Verify that chapters exceeding max_words without scene breaks split at paragraph boundaries."""
-    p1 = "First paragraph content. " * 30
-    p2 = "Second paragraph content. " * 30
-    p3 = "Third paragraph content. " * 30
+    p1 = "First paragraph content. " * 10
+    p2 = "Second paragraph content. " * 10
+    p3 = "Third paragraph content. " * 10
     full_text = f"{p1}\n\n{p2}\n\n{p3}"
     chunks = chunk_text(full_text, chapter_title="Chapter 3", chapter_idx=3, max_words=50)
-    assert len(chunks) >= 3
+    assert len(chunks) == 3
     assert "First paragraph content." in chunks[0].body
     assert "Second paragraph content." in chunks[1].body
     assert "Third paragraph content." in chunks[2].body
+    for c in chunks:
+        assert len(c.body.split()) <= 50
 
 
 def test_chunk_single_very_long_paragraph():
@@ -102,3 +108,110 @@ def test_parser_init_exports():
     assert hasattr(parser, "chunk_text")
     assert "BookChunk" in parser.__all__
     assert "chunk_text" in parser.__all__
+
+
+def test_chunk_multi_scene_with_oversized_scene_subdivided():
+    """Verify that a multi-scene chapter where one scene > max_words is properly subdivided."""
+    p1 = "Alpha paragraph one. " * 10  # 30 words
+    p2 = "Alpha paragraph two. " * 10  # 30 words
+    p3 = "Alpha paragraph three. " * 10  # 30 words
+    scene1 = f"{p1}\n\n{p2}\n\n{p3}"  # 90 words > max_words 50
+    scene2 = "Beta scene content. " * 10  # 30 words
+    text = f"{scene1}\n\n***\n\n{scene2}"
+    chunks = chunk_text(text, chapter_title="Chapter Oversized Scene", max_words=50)
+
+    # All chunks must respect max_words
+    for c in chunks:
+        assert len(c.body.split()) <= 50
+
+    # Scene 1 paragraphs are subdivided across chunks without exceeding limits
+    assert "Alpha paragraph one." in chunks[0].body
+    assert "Alpha paragraph two." in chunks[1].body
+    assert "Alpha paragraph three." in chunks[2].body
+    assert "Beta scene content." in chunks[3].body
+
+
+def test_chunk_long_paragraph_sliced_cleanly():
+    """Verify that an individual paragraph exceeding max_words is cleanly sliced into word blocks."""
+    words = [f"word{i}" for i in range(115)]
+    text = " ".join(words)
+    chunks = chunk_text(text, max_words=50)
+
+    assert len(chunks) == 3
+    assert len(chunks[0].body.split()) == 50
+    assert len(chunks[1].body.split()) == 50
+    assert len(chunks[2].body.split()) == 15
+    # Verify exact word sequence preservation across slices
+    reconstructed = " ".join(c.body for c in chunks)
+    assert reconstructed == text
+
+
+def test_chunk_preserves_intra_chunk_scene_breaks():
+    """Verify that when short scenes fit within one chunk, the scene break delimiter is preserved."""
+    s1 = "Short scene one."
+    s2 = "Short scene two."
+    s3 = "Short scene three."
+    sep1 = "***"
+    sep2 = "---"
+    text = f"{s1}\n\n{sep1}\n\n{s2}\n\n{sep2}\n\n{s3}"
+    chunks = chunk_text(text, max_words=100)
+
+    assert len(chunks) == 1
+    body = chunks[0].body
+    assert sep1 in body
+    assert sep2 in body
+    assert body == f"{s1}\n\n{sep1}\n\n{s2}\n\n{sep2}\n\n{s3}"
+
+    # Also test case where total chapter exceeds max_words, but first two scenes fit in chunk 0
+    s4_long = "Long scene four content. " * 30  # 120 words
+    multi_text = f"{s1}\n\n{sep1}\n\n{s2}\n\n***\n\n{s4_long}"
+    chunks2 = chunk_text(multi_text, max_words=50)
+    assert len(chunks2) >= 2
+    # Chunk 0 has s1, sep1, and s2 preserved together
+    assert sep1 in chunks2[0].body
+    assert s1 in chunks2[0].body
+    assert s2 in chunks2[0].body
+    for c in chunks2:
+        assert len(c.body.split()) <= 50
+
+
+def test_chunk_properties_and_parameter_alias():
+    """Verify header, chapter_index, scene_index property aliases and max_words_per_chunk parameter."""
+    chunk = BookChunk(
+        chunk_id=5,
+        chapter_idx=2,
+        scene_idx=3,
+        chapter_title="Chapter Test",
+        body="Some chunk body.",
+    )
+    # Header property
+    expected_header = "<!-- chunk_id: 005 | chapter: 2 | scene: 3 | title: Chapter Test -->\n\n"
+    assert chunk.header == expected_header
+    assert chunk.render() == expected_header + "Some chunk body.\n"
+
+    # Property aliases
+    assert chunk.chapter_index == 2
+    assert chunk.scene_index == 3
+
+    # Setters
+    chunk.chapter_index = 4
+    chunk.scene_index = 7
+    assert chunk.chapter_idx == 4
+    assert chunk.scene_idx == 7
+
+    # max_words_per_chunk parameter alias
+    text = "Word " * 60
+    chunks = chunk_text(text, max_words_per_chunk=25)
+    assert len(chunks) >= 2
+    for c in chunks:
+        assert len(c.body.split()) <= 25
+
+    # Parameter validation
+    with pytest.raises(ValueError, match="max_words must be greater than 0"):
+        chunk_text(text, max_words=0)
+
+    with pytest.raises(ValueError, match="max_words must be greater than 0"):
+        chunk_text(text, max_words=-5)
+
+    with pytest.raises(ValueError, match="max_words must be greater than 0"):
+        chunk_text(text, max_words_per_chunk=0)
