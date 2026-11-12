@@ -1,5 +1,11 @@
 from pathlib import Path
-from book_angel.staging import StagingWorkspace, ChunkDiff, generate_unified_diff
+from book_angel.staging import (
+    ChunkDiff,
+    StagingWorkspace,
+    extract_change_snippets,
+    format_change_summary,
+    generate_unified_diff,
+)
 from book_angel.parser.chunker import BookChunk
 from book_angel.config import RulesConfig
 
@@ -70,3 +76,30 @@ def test_staging_ignores_non_digit_chunk_files(tmp_path: Path):
     diffs = ws.get_modified_chunks()
     # chunk_backup.txt should be safely skipped
     assert len(diffs) == 0
+
+
+def test_extract_change_snippets():
+    orig = "Chapter 1.\nHe saw Julian with intense passion and pulled him close.\nThe fire crackled."
+    mod = "Chapter 1.\nHe saw Julia with gentle fondness and held her hand.\nThe fire crackled."
+    diff = ChunkDiff(1, Path("chunk_001.txt"), orig, mod)
+
+    snippets = extract_change_snippets(diff)
+    assert len(snippets) >= 1
+    before_clip, after_clip = snippets[0]
+    assert "Julian" in before_clip
+    assert "Julia" in after_clip
+
+
+def test_format_change_summary():
+    orig = "The warrior slashed the soldier with bloody gore across the floor."
+    mod = "The warrior disarmed the soldier swiftly onto the floor."
+    diff = ChunkDiff(15, Path("chunk_015.txt"), orig, mod)
+
+    summary = format_change_summary([diff])
+    assert "SUMMARY OF CHANGES MADE" in summary
+    assert "Chunk 015" in summary
+    assert "Before:" in summary
+    assert "After:" in summary
+    assert "bloody gore" in summary
+    assert "disarmed" in summary
+

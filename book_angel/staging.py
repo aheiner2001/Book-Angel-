@@ -125,3 +125,97 @@ def generate_unified_diff(diff: ChunkDiff) -> str:
     )
     return "".join(diff_generator)
 
+
+def extract_change_snippets(diff: ChunkDiff, max_snippets_per_chunk: int = 5) -> list[tuple[str, str]]:
+    """Extract concise clipped 'before' and 'after' text snippets highlighting differences."""
+    import re
+
+    orig_clean = re.sub(r"^<!--.*?-->\s*", "", diff.original_text, flags=re.DOTALL).strip()
+    mod_clean = re.sub(r"^<!--.*?-->\s*", "", diff.modified_text, flags=re.DOTALL).strip()
+
+    orig_lines = [l.strip() for l in orig_clean.splitlines() if l.strip()]
+    mod_lines = [l.strip() for l in mod_clean.splitlines() if l.strip()]
+
+    matcher = difflib.SequenceMatcher(None, orig_lines, mod_lines)
+    opcodes = matcher.get_opcodes()
+    snippets: list[tuple[str, str]] = []
+
+    for tag, i1, i2, j1, j2 in opcodes:
+        if tag == "equal":
+            continue
+
+        b_text = " ".join(orig_lines[i1:i2])
+        a_text = " ".join(mod_lines[j1:j2])
+
+        if tag == "replace":
+            w1 = b_text.split()
+            w2 = a_text.split()
+            wm = difflib.SequenceMatcher(None, w1, w2)
+            sub_ops = [op for op in wm.get_opcodes() if op[0] != "equal"]
+            if sub_ops:
+                s1 = max(0, sub_ops[0][1] - 3)
+                e1 = min(len(w1), sub_ops[-1][2] + 3)
+                s2 = max(0, sub_ops[0][3] - 3)
+                e2 = min(len(w2), sub_ops[-1][4] + 3)
+
+                c1 = ("... " if s1 > 0 else "") + " ".join(w1[s1:e1]) + (" ..." if e1 < len(w1) else "")
+                c2 = ("... " if s2 > 0 else "") + " ".join(w2[s2:e2]) + (" ..." if e2 < len(w2) else "")
+                snippets.append((c1, c2))
+            else:
+                snippets.append((b_text, a_text))
+        elif tag == "delete":
+            w1 = b_text.split()
+            c1 = " ".join(w1[:15]) + (" ..." if len(w1) > 15 else "")
+            snippets.append((c1, "[removed]"))
+        elif tag == "insert":
+            w2 = a_text.split()
+            c2 = " ".join(w2[:15]) + (" ..." if len(w2) > 15 else "")
+            snippets.append(("[added]", c2))
+
+        if len(snippets) >= max_snippets_per_chunk:
+            break
+
+    # Fallback if line-based matching produced nothing but texts differ
+    if not snippets and orig_clean != mod_clean:
+        w1 = orig_clean.split()
+        w2 = mod_clean.split()
+        wm = difflib.SequenceMatcher(None, w1, w2)
+        sub_ops = [op for op in wm.get_opcodes() if op[0] != "equal"]
+        if sub_ops:
+            s1 = max(0, sub_ops[0][1] - 3)
+            e1 = min(len(w1), sub_ops[-1][2] + 3)
+            s2 = max(0, sub_ops[0][3] - 3)
+            e2 = min(len(w2), sub_ops[-1][4] + 3)
+            c1 = ("... " if s1 > 0 else "") + " ".join(w1[s1:e1]) + (" ..." if e1 < len(w1) else "")
+            c2 = ("... " if s2 > 0 else "") + " ".join(w2[s2:e2]) + (" ..." if e2 < len(w2) else "")
+            snippets.append((c1, c2))
+
+    return snippets
+
+
+def format_change_summary(diffs: list[ChunkDiff]) -> str:
+    """Format a clean, readable summary of all clipped changes across modified chunks."""
+    if not diffs:
+        return "No changes made."
+
+    lines: list[str] = [
+        "=" * 65,
+        f"📝 SUMMARY OF CHANGES MADE ({len(diffs)} chunk(s) modified)",
+        "=" * 65,
+    ]
+
+    for diff in diffs:
+        snippets = extract_change_snippets(diff)
+        lines.append(f"\n• Chunk {diff.chunk_id:03d} ({diff.path.name}):")
+        if not snippets:
+            lines.append("  (Formatting or whitespace adjustments)")
+        else:
+            for idx, (before_clip, after_clip) in enumerate(snippets, 1):
+                if len(snippets) > 1:
+                    lines.append(f"  Change {idx}:")
+                lines.append(f"    - Before: \"{before_clip}\"")
+                lines.append(f"    + After:  \"{after_clip}\"")
+
+    lines.append("\n" + "=" * 65)
+    return "\n".join(lines)
+

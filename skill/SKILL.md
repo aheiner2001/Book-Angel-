@@ -19,6 +19,13 @@ Use this skill when the user asks to filter, clean, adapt characters, or process
      - Inspect each chunk against the policy levels (romance, violence, language), omitted topics, and character mappings.
      - If non-compliant passages or character names (e.g. Julian -> Julia) are found, edit the file in place.
      - Keep all non-conflicting prose, tone, formatting, and HTML/scene tags 100% identical.
+     - **Report Changes Live**: Each time you modify a chunk, output a brief before/after clip:
+       ```text
+       Chunk [ID] (Chapter X):
+         - Before: "...clipped original text..."
+         + After:  "...clipped adapted text..."
+         Reason: [Brief explanation]
+       ```
 
 3. **Diff Review & Verification**:
    - The user inspects diffs using `book-angel review` or visually in Cursor / Git source control.

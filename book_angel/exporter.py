@@ -12,7 +12,7 @@ import uuid
 import xml.etree.ElementTree as ET
 import zipfile
 
-from book_angel.staging import StagingWorkspace
+from book_angel.staging import StagingWorkspace, format_change_summary
 
 
 def export_book(
@@ -41,6 +41,15 @@ def export_book(
 
     author = meta.get("author", "Unknown Author")
     safe_slug = re.sub(r"[^\w\-]", "_", final_title).strip("_") or "exported_book"
+
+    # Generate and save change summary if chunks were modified
+    diffs = workspace.get_modified_chunks()
+    if diffs:
+        summary_text = format_change_summary(diffs)
+        summary_path = out_dir / f"{safe_slug}_Changes_Summary.txt"
+        summary_path.write_text(summary_text, encoding="utf-8")
+        print(f"\n{summary_text}")
+        print(f"📄 Change summary saved to: {summary_path}\n")
 
     if export_format.lower() == "epub":
         out_path = out_dir / f"{safe_slug}.epub"

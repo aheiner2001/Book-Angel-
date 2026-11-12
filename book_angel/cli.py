@@ -21,7 +21,7 @@ from book_angel.exporter import export_book
 from book_angel.parser.chunker import chunk_text
 from book_angel.parser.epub_engine import parse_epub
 from book_angel.parser.pdf_engine import parse_pdf
-from book_angel.staging import StagingWorkspace, generate_unified_diff
+from book_angel.staging import StagingWorkspace, generate_unified_diff, format_change_summary
 
 
 def prompt_mac_file_picker() -> Path | None:
@@ -187,7 +187,12 @@ def generate_ai_prompt(ws: StagingWorkspace) -> str:
         f"Instructions for AI:\n"
         f"1. Read the rules in rules.md and inspect each chunk file in the chunks directory.\n"
         f"2. Surgically modify only the specific sentences that conflict with the rules. Keep all other text 100% identical.\n"
-        f"3. When you finish modifying the chunks, automatically export the clean book directly to ~/Downloads by running:\n"
+        f"3. Each time you make a change, immediately output a brief clip showing what changed:\n"
+        f"   Chunk [ID]:\n"
+        f"     - Before: \"...clipped original text...\"\n"
+        f"     + After:  \"...clipped adapted text...\"\n"
+        f"     Reason: [Brief explanation]\n"
+        f"4. When you finish modifying the chunks, automatically export the clean book directly to ~/Downloads by running:\n"
         f"   cd \"{ws.base_dir}\" && book-angel export\n"
     )
 
@@ -424,7 +429,8 @@ def main(argv: list[str] | None = None) -> None:
         if not diffs:
             print("No modified chunks to review. All chunks match original.")
             return
-        print(f"Found {len(diffs)} modified chunk(s) for review:\n")
+        print(format_change_summary(diffs))
+        print(f"\nFound {len(diffs)} modified chunk(s) for review:\n")
         for diff in diffs:
             print(f"--- Chunk {diff.chunk_id:03d} ---")
             print(generate_unified_diff(diff))

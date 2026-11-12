@@ -49,6 +49,22 @@ Your active rules are in [rules.txt](file:///Users/aaronheiner/Book-Angel-/rules
 
 ---
 
+## 🔍 Before & After Change Clips
+
+Whenever changes are made:
+1. **Live in AI Chat**: Each time the AI modifies a chunk, it prints a clean Before & After snippet showing exactly what was modified and why.
+2. **Review Command**: Option `[4] Review Chunk Diffs` shows clear snippets of every sentence modified.
+3. **Automatic Change Summary**: Upon export, a complete `[Book_Title]_Changes_Summary.txt` log is automatically saved to your `~/Downloads` folder alongside your clean `.epub`.
+
+Example snippet:
+```text
+• Chunk 015:
+  - Before: "...his hands roamed over her as they tumbled onto the bed..."
+  + After:  "...they sat together speaking of what they loved, before saying goodnight..."
+```
+
+---
+
 ## 🧪 Testing
 
 ```bash
