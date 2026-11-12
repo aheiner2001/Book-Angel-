@@ -101,6 +101,19 @@ def run_interactive_config(rules_path: Path) -> None:
             )
             print(f"   ✅ Added rule: {orig} -> {new_n} ({pron})")
 
+    print("\n4. Custom Plain-English Rules (Surgical Triggers)")
+    print("   Tell the AI exactly what situations to watch for and what to do.")
+    if current.custom_rules:
+        print("   Current rules:")
+        for r in current.custom_rules:
+            print(f"   • {r}")
+    while True:
+        rule_input = input("   Enter a custom rule [or press Enter to finish]: ").strip()
+        if not rule_input:
+            break
+        current.custom_rules.append(rule_input)
+        print(f"   ✅ Added rule: {rule_input}")
+
     save_rules_yaml(current, rules_path)
     print(f"\n✅ Rules saved to: {rules_path}")
     open_now = input("Would you like to open rules.yaml in your text editor to view/edit? [Y/n]: ").strip().lower()

@@ -110,20 +110,21 @@ def generate_rules_markdown(config: RulesConfig) -> str:
     lines = [
         "# Book-Angel Content Rules",
         "",
-        "You are acting as an editorial assistant following strict narrative filtering guidelines.",
-        "Modify only passages that conflict with these rules. Keep all other prose, tone, and character voices intact.",
-        "",
-        "## Policy Levels",
-        f"- **Romance Level:** {config.romance_level}",
-        f"- **Violence Level:** {config.violence_level}",
-        f"- **Language Level:** {config.language_level}",
+        "> **CRITICAL SURGICAL EDITING DIRECTIVE:**",
+        "> - You are an editor with a scalpel, NOT a general re-writer.",
+        "> - Do NOT rewrite paragraphs for style, vocabulary, or flow.",
+        "> - Only modify the exact sentences that directly conflict with the user's specific rules below.",
+        "> - Leave 99% of the prose completely untouched and 100% bit-for-bit identical to the author's original words.",
+        "> - If a sentence or paragraph does not violate any rule, do NOT touch a single word.",
         "",
     ]
 
-    if config.omitted_topics:
-        lines.append("## Omitted Topics / Themes")
-        for topic in config.omitted_topics:
-            lines.append(f"- Do not include: {topic}")
+    if config.custom_rules:
+        lines.append("## Custom Rules")
+        lines.append("When you encounter these specific situations in the book, apply these exact instructions:")
+        lines.append("")
+        for rule in config.custom_rules:
+            lines.append(f"- {rule}")
         lines.append("")
 
     if config.character_mappings:
@@ -144,10 +145,16 @@ def generate_rules_markdown(config: RulesConfig) -> str:
                 )
         lines.append("")
 
-    if config.custom_rules:
-        lines.append("## Custom Rules")
-        for rule in config.custom_rules:
-            lines.append(f"- {rule}")
+    lines.append("## Policy Levels")
+    lines.append(f"- **Romance Level:** {config.romance_level}")
+    lines.append(f"- **Violence Level:** {config.violence_level}")
+    lines.append(f"- **Language Level:** {config.language_level}")
+    lines.append("")
+
+    if config.omitted_topics:
+        lines.append("## Omitted Topics / Themes")
+        for topic in config.omitted_topics:
+            lines.append(f"- Do not include: {topic}")
         lines.append("")
 
     if config.examples:

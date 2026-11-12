@@ -1,26 +1,46 @@
+# Book-Angel Content Rules Configuration
+# Edit this file anytime to add your custom plain-English rules.
+
+# ==============================================================================
+# 🎯 1. Custom Plain-English Rules (Surgical Triggers)
+# Tell the AI exactly what major situations to watch for and what to change.
+# The AI is strictly instructed to NOT touch anything else!
+# ==============================================================================
+custom_rules:
+  - "Only change passionate or intense kissing scenes to mild/sweet affection. Leave ordinary friendly kisses, hugs, and casual handholding completely alone."
+  - "Only soften graphic violence, gore, or torture. Leave exciting action, sword fights, and battles completely intact."
+  - "When a scene depicts intimate romance between two men or two women, adapt the love interest into the opposite gender so interactions remain natural."
+
+# ==============================================================================
+# 👥 2. Character & Gender Transformations (Character Swapping)
+# Change a character's name and pronouns so relationships remain natural:
+# ==============================================================================
+character_mappings:
+  - original_name: "Julian"
+    new_name: "Julia"
+    new_gender: "female"
+    pronouns: "she/her/hers"
+    instruction: "Transform Julian into a female love interest named Julia. Adapt all pronouns (he->she, him->her, his->her/hers) and physical descriptors so the relationship with the protagonist is completely natural."
+
+# ==============================================================================
+# 🚫 3. Omitted Topics
+# ==============================================================================
+omitted_topics:
+  - graphic sexual content
+  - extreme gore or torture
+
+# ==============================================================================
+# 🔍 4. Few-Shot Examples (Teach the AI your exact style)
+# ==============================================================================
+examples:
+  - before: "He grabbed her roughly and crushed his mouth against hers in a fiery, breathless kiss that left them gasping."
+    after: "He reached out and gently took her hand, leaning in to give her a warm, affectionate kiss on the cheek."
+  - before: "The blade tore through his abdomen, spilling blood and intestines across the stone floor."
+    after: "The blade struck with a heavy thud, disarming him instantly and sending him crashing to the floor."
+
+# ==============================================================================
+# ⚙️ 5. General Levels (Optional fallbacks)
+# ==============================================================================
 romance_level: mild
 violence_level: adventure
 language_level: cleaned
-omitted_topics:
-- graphic sexual content
-- extreme gore or torture
-custom_rules:
-- Preserve character wit, banter, and story pacing.
-- Maintain the author's narrative prose style and tone.
-examples:
-- before: He grabbed her roughly and crushed his mouth against hers in a fiery, desperate
-    kiss.
-  after: He reached out and gently took her hand, leaning in to give her a warm, affectionate
-    kiss on the cheek.
-- before: The blade tore through his flesh, spilling blood and internal organs across
-    the stones.
-  after: The blade struck with a heavy thud, disarming him instantly and sending him
-    crashing to the floor.
-character_mappings:
-- original_name: Julian
-  new_name: Julia
-  new_gender: female
-  pronouns: she/her/hers
-  instruction: Transform Julian into a female love interest named Julia. Adapt all
-    pronouns (he->she, him->her, his->her/hers) and physical descriptors so the relationship
-    with the protagonist is completely natural.
