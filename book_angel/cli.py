@@ -73,6 +73,9 @@ def main(argv: list[str] | None = None) -> None:
         slug = book_path.stem.lower().replace(" ", "-")
         ws = StagingWorkspace(base_dir=Path.cwd(), book_slug=slug)
 
+        rules_path = Path.home() / ".book-angel" / "rules.yaml"
+        rules_cfg = load_rules_yaml(rules_path) if rules_path.exists() else RulesConfig()
+
         if book_path.suffix.lower() == ".epub":
             with parse_epub(book_path) as epub:
                 if epub.drm_protected:
@@ -92,7 +95,7 @@ def main(argv: list[str] | None = None) -> None:
                     )
                     chunks.extend(c)
                     chunk_id += len(c)
-                ws.initialize(epub.title, epub.author, epub.cover_bytes, RulesConfig(), chunks)
+                ws.initialize(epub.title, epub.author, epub.cover_bytes, rules_cfg, chunks)
                 print(f"Successfully unpacked {len(chunks)} chunks into {ws.chunks_dir}")
 
         elif book_path.suffix.lower() == ".pdf":
@@ -102,7 +105,7 @@ def main(argv: list[str] | None = None) -> None:
                 sys.exit(1)
             joined = "\n\n".join(pdf.pages)
             chunks = chunk_text(joined, chapter_title=pdf.title, chapter_idx=1)
-            ws.initialize(pdf.title, pdf.author, None, RulesConfig(), chunks)
+            ws.initialize(pdf.title, pdf.author, None, rules_cfg, chunks)
             print(f"Successfully unpacked {len(chunks)} chunks into {ws.chunks_dir}")
         else:
             print(
